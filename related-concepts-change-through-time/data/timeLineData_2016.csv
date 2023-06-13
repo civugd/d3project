@@ -1,0 +1,27 @@
+,concepts,year,relevance_score,level,works_count,cited_by_count
+7,n-gram,2016,8970.108,3,30471,263578
+19,Speech recognition,2016,105210.43,1,27351,49183
+31,Deep learning,2016,72219.01,2,1000,1917
+43,Word embedding,2016,12087.948,3,5283,37654
+55,Recurrent neural network,2016,51233.49,3,2682,20902
+67,Machine translation,2016,29509.887,2,680,12108
+79,Natural language processing,2016,119515.77,1,325,4754
+91,Hidden Markov model,2016,46177.316,2,80,2109
+103,Information retrieval,2016,176237.69,1,169,2269
+115,Bag-of-words model,2016,10376.753,2,120,1677
+127,Artificial neural network,2016,157381.48,2,66,366
+139,Machine learning,2016,238090.06,1,52210,346226
+151,Word2vec,2016,6442.85,3,1887,40595
+163,Acoustic model,2016,8523.198,3,41,949
+175,Computational linguistics,2016,15171.757,2,54607,631240
+187,Probability distribution,2016,30863.594,2,7411,75583
+199,Artificial intelligence,2016,509555.97,1,995,10921
+211,tf–idf,2016,9465.727,3,130,1767
+223,Bigram,2016,8158.6265,3,64,2066
+235,Trigram,2016,9627.066,2,36,1440
+247,Perplexity,2016,8798.737,3,17,353
+259,Word error rate,2016,27770.688,2,19,270
+271,Lexical analysis,2016,6512.3174,2,5,131
+283,Document clustering,2016,9506.468,3,121,2504
+295,Typing,2016,22903.598,2,54,2920
+307,Time delay neural network,2016,24803.207,3,60893,388427

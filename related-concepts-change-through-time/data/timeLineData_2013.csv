@@ -1,0 +1,27 @@
+,concepts,year,relevance_score,level,works_count,cited_by_count
+10,n-gram,2013,8970.108,3,29138,231145
+22,Speech recognition,2013,105210.43,1,51847,5545
+34,Deep learning,2013,72219.01,2,995,119
+46,Word embedding,2013,12087.948,3,6091,18886
+58,Recurrent neural network,2013,51233.49,3,2617,15784
+70,Machine translation,2013,29509.887,2,549,12403
+82,Natural language processing,2013,119515.77,1,316,3926
+94,Hidden Markov model,2013,46177.316,2,101,1114
+106,Information retrieval,2013,176237.69,1,171,2385
+118,Bag-of-words model,2013,10376.753,2,118,1769
+130,Artificial neural network,2013,157381.48,2,19,431
+142,Machine learning,2013,238090.06,1,47155,302029
+154,Word2vec,2013,6442.85,3,1602,35953
+166,Acoustic model,2013,8523.198,3,46,1033
+178,Computational linguistics,2013,15171.757,2,49369,636263
+190,Probability distribution,2013,30863.594,2,8273,61730
+202,Artificial intelligence,2013,509555.97,1,888,10689
+214,tf–idf,2013,9465.727,3,188,2164
+226,Bigram,2013,8158.6265,3,68,2232
+238,Trigram,2013,9627.066,2,32,1445
+250,Perplexity,2013,8798.737,3,12,395
+262,Word error rate,2013,27770.688,2,8,373
+274,Lexical analysis,2013,6512.3174,2,5,193
+286,Document clustering,2013,9506.468,3,135,1741
+298,Typing,2013,22903.598,2,37,2119
+310,Time delay neural network,2013,24803.207,3,93771,281390

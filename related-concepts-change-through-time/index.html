@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <title>Time line</title>
+    <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+    <style type="text/css">
+      h3 {
+        align-content: center;
+        position: relative;
+        left: 100px;
+      }
+
+      .timeline {
+        font-family: "Times New Roman", Times, serif;
+        display: block;
+        padding: 10px 5px;
+        box-shadow: rgba(0, 0, 0, 0.15) 2.6px 1.95px 1.95px 2.6px;
+      }
+
+      button {
+        background-color: whitesmoke;
+        font-size: 18px;
+        border-radius: 8px;
+        border-width: 0;
+        list-style: none;
+        margin-left: 20px;
+        padding: 10px 12px;
+        display: inline-block;
+        cursor: pointer;
+        text-align: center;
+        vertical-align: baseline;
+        white-space: nowrap;
+        user-select: none;
+        transition: all 200ms;
+        font-family: "Times New Roman", Times, serif;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 20px;
+        touch-action: manipulation;
+      }
+
+      circle:hover {
+        stroke-width: "12px";
+        fill-opacity: 0.5;
+      }
+      .concepts-name:hover {
+        fill: aliceblue;
+        text-shadow: 2px 2px 5px black;
+        font-size: 18px;
+      }
+    </style>
+  </head>
+  <script type="text/javascript">
+    //Width and height
+    var margin = { top: 20, right: 20, bottom: 40, left: 60 };
+
+    var w = 1000;
+    var h = 500;
+    var padding = 20;
+
+    //var dataset, xScale, yScale;  //Empty, for now
+
+    //For converting strings to Dates
+    var parseTime = d3.timeParse("%Y");
+
+    //Function for converting CSV values from strings to Dates and numbers
+    var rowConverter = function (d) {
+      return {
+        year: parseTime(d.year),
+        concepts: d.concepts,
+        relevance_score: parseFloat(d.relevance_score),
+        works_count: parseInt(d.works_count),
+        cited_by_count: parseInt(d.cited_by_count),
+        level: parseInt(d.level),
+      };
+    };
+  </script>
+
+  <body>
+    <div class="timeline">
+      <div id="yearButtons">
+        <button type="button" id="twelve">2012</button>
+        <button type="button" id="thirteen">2013</button>
+        <button type="button" id="fourteen">2014</button>
+        <button type="button" id="fifteen">2015</button>
+        <button type="button" id="sixteen">2016</button>
+        <button type="button" id="seventeen">2017</button>
+        <button type="button" id="eighteen">2018</button>
+        <button type="button" id="nineteen">2019</button>
+        <button type="button" id="twenty">2020</button>
+        <button type="button" id="twentyFirst">2021</button>
+        <button type="button" id="twentySecond">2022</button>
+        <button type="button" id="twentyThird">now</button>
+      </div>
+      <script type="text/javascript">
+        var dataset, xAxis, yAxis, colorScale, aScale;
+        function updataC(d, svg) {
+          svg
+            .selectAll("circle")
+            .data(dataset)
+            .transition()
+            .duration(1500)
+            //.on("start", function() {
+            //d3.select(this)
+            .attr("cx", function (d) {
+              return xScale(d.works_count);
+            })
+            .attr("cy", function (d, i) {
+              return yScale(d.cited_by_count);
+            })
+            .attr("r", function (d) {
+              return aScale(d.relevance_score * 1.3);
+            })
+            .attr("fill-opacity", ".5")
+            //})
+            .on("end", function (d) {
+              d3.select(this)
+                .transition()
+                .duration(800)
+                .attr("fill-opacity", "1")
+                .attr("r", function (d) {
+                  return aScale(d.relevance_score);
+                });
+            });
+        }
+
+        function updateT(d, svg, year) {
+          svg
+            .selectAll("text.concepts-name")
+            .data(dataset)
+            .transition()
+            .duration(1500)
+            //.on("start", function() {
+            //d3.select(this)
+            .attr("x", function (d) {
+              return xScale(d.works_count);
+            })
+            .attr("y", function (d, i) {
+              return yScale(d.cited_by_count);
+            });
+          svg
+            .select(".YearText")
+            .transition()
+            .duration(2400)
+            .ease(d3.easeBounceIn)
+            .text(year)
+            .on("start", function (d) {
+              d3.select(this)
+                //.attr('font-size','80px')
+                .attr("fill", "#ccc");
+            })
+            .on("end", function (d) {
+              d3.select(this).transition().attr("fill", "#aaa");
+            });
+        }
+
+        function updateDomain(d) {
+          xScale.domain([
+            d3.min(dataset, function (d) {
+              return d.works_count;
+            }),
+            d3.max(dataset, function (d) {
+              return d.works_count;
+            }),
+          ]);
+
+          yScale.domain([
+            d3.max(dataset, function (d) {
+              return d.cited_by_count;
+            }),
+            d3.min(dataset, function (d) {
+              return d.cited_by_count;
+            }),
+          ]);
+        }
+
+        d3.csv("data/timeLineData_2023.csv", rowConverter, function (data) {
+          //var originData = data;
+          //var selectedY = 2020;
+          //Copy data into global dataset
+          dataset = data; //originData.filter(function(d) { return d.year  == selectedY;});
+
+          //dataset = data;
+
+          //Create scale functions
+          xScale = d3
+            .scaleLinear()
+            .domain([
+              0, //d3.min(dataset, function(d){ return d.works_count;}),
+              d3.max(dataset, function (d) {
+                return d.works_count;
+              }),
+            ])
+            .range([padding * 4, w - padding * 1]);
+
+          yScale = d3
+            .scaleLinear()
+            .domain([
+              0, //d3.min(dataset, function(d){ return d.cited_by_count;}),
+              d3.max(dataset, function (d) {
+                return d.cited_by_count;
+              }),
+            ])
+            .range([padding * 3, h]);
+          //.paddingInner(0.5);//['1','2','3']//dataset.length
+
+          //var colorScale = d3.ScaleQuantize();
+
+          colorScale = d3
+            .scaleQuantile()
+            .domain([1, 2, 3])
+            .range(["gold", "plum", "skyblue"]);
+
+          aScale = d3
+            .scaleSqrt()
+            .domain([
+              0,
+              d3.max(dataset, function (d) {
+                return d.relevance_score;
+              }),
+            ])
+            .range([5, 70]);
+
+          xAxis = d3.axisBottom().scale(xScale).ticks(10); //tickValues([0,100,250,600]);
+
+          yAxis = d3.axisLeft().scale(yScale).ticks();
+
+          //Create SVG element
+          var svg = d3
+            .select("div.timeline")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h)
+            .attr("background-color", "#F5EFE7");
+
+          var levelList = [1, 2, 3];
+          for (let i = 0; i < 3; i++) {
+            // Y axis label:
+            svg
+              .append("text")
+              .attr("y", 100 + i * 20)
+              .attr("x", 900)
+              .attr("font-size", "12px")
+              .attr("fill", colorScale(levelList[i]))
+              .text("level " + levelList[i]);
+          }
+
+          //Generate circles last, so they appear in front
+          var datadots = svg
+            .selectAll("circle")
+            .data(dataset)
+            .enter()
+            .append("circle")
+            .attr("cx", function (d) {
+              return xScale(d.works_count);
+            })
+            .attr("cy", function (d, i) {
+              return yScale(d.cited_by_count);
+            })
+            .attr("r", function (d) {
+              //return 20;
+
+              return aScale(d.relevance_score);
+            })
+            .attr("fill-opacity", "1")
+            .attr("fill", function (d, i) {
+              return colorScale(d.level);
+            })
+            .attr("stroke", function (d, i) {
+              return colorScale(d.level);
+            });
+
+          //Generate date labels after, so they are in front
+          svg
+            .selectAll("text")
+            .data(dataset)
+            .enter()
+            .append("text")
+            .attr("class", "concepts-name")
+            .text(function (d) {
+              return d.concepts;
+            })
+            .attr("x", function (d) {
+              //var odd = i % 2 === 1;
+              return xScale(d.works_count); //odd ? xScale(d.works_count)+10 : xScale(d.year) ;
+            })
+            .attr("y", function (d) {
+              return yScale(d.cited_by_count);
+            })
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "10px")
+            .attr("font-width", "2px")
+            .attr("text-anchor", "middle")
+            .attr("fill", "gray"); //function(d){ return colorScale(d.level)});
+
+          svg
+            .append("g") //分組元素 不可見 但可以包含且應用變換
+            .attr("class", "y axis")
+            .attr("transform", "translate(-10,30)")
+            .call(xAxis); //call會從方法練的上一步接收到選中的元素再把他交給其他函數
+
+          svg
+            .append("g") //分組元素 不可見 但可以包含且應用變換
+            .attr("class", "x axis")
+            .attr(
+              "transform",
+              "translate(" + padding * 2.5 + "," + padding + ")"
+            )
+            .call(yAxis); //call會從方法練的上一步接收到選中的元素再把他交給其他函數
+
+          console.log("finish drawing");
+
+          // x axis label:
+          svg
+            .append("text")
+            .attr("text-anchor", "end")
+            //.attr("transform", "rotate(-90)")
+            .attr("y", padding)
+            .attr("x", 1000)
+            .attr("font-size", "12px")
+            .text("当年该领域被引用量");
+
+          //y axis label
+          svg
+            .append("text")
+            .attr("text-anchor", "end")
+            //.attr("transform", "rotate(-90)")
+            .attr("y", h - padding / 2)
+            .attr("x", 160)
+            .attr("font-size", "12px")
+            .text("当年该领域论文量");
+
+          svg
+            .append("text")
+            .attr("text-anchor", "end")
+            .attr("class", "YearText")
+            .attr("y", h - padding / 2)
+            .attr("x", w - padding)
+            .attr("fill", "#aaa")
+            .attr("font-weight", "bold")
+            .attr("font-size", "72px")
+            .attr("opacity", ".7")
+            .text("2023");
+
+          d3.select("#twelve").on("click", function (d) {
+            year = 2012;
+            console.log(year);
+            d3.csv(
+              "data/timeLineData_" + year + ".csv",
+              rowConverter,
+              function (data) {
+                //New values for dataset
+                //Copy data into global dataset
+                dataset = data;
+                //Update scale domains
+                updateDomain(d);
+                //Update all circles
+                updataC(d, svg);
+                updateT(d, svg, year);
+              }
+            );
+          });
+
+          d3.select("#thirteen").on("click", function (d) {
+            year = 2013;
+            console.log(year);
+            d3.csv(
+              "data/timeLineData_" + year + ".csv",
+              rowConverter,
+              function (data) {
+                dataset = data;
+                //Update scale domains
+                updateDomain(d);
+                //Update all circles
+                updataC(d, svg);
+                updateT(d, svg, year);
+              }
+            );
+          });
+
+          d3.select("#fourteen").on("click", function (d) {
+            year = 2014;
+            console.log(year);
+            d3.csv(
+              "data/timeLineData_" + year + ".csv",
+              rowConverter,
+              function (data) {
+                dataset = data;
+                //Update scale domains
+                updateDomain(d);
+                //Update all circles
+                updataC(d, svg);
+                updateT(d, svg, year);
+              }
+            );
+          });
+
+          d3.select("#fifteen").on("click", function (d) {
+            year = 2015;
+            console.log(year);
+            d3.csv(
+              "data/timeLineData_" + year + ".csv",
+              rowConverter,
+              function (data) {
+                dataset = data;
+                //Update scale domains
+                updateDomain(d);
+                //Update all circles
+                updataC(d, svg);
+                updateT(d, svg, year);
+              }
+            );
+          });
+
+          d3.select("#sixteen").on("click", function (d) {
+            year = 2016;
+            console.log(year);
+            d3.csv(
+              "data/timeLineData_" + year + ".csv",
+              rowConverter,
+              function (data) {
+                dataset = data;
+                //Update scale domains
+                updateDomain(d);
+                //Update all circles
+                updataC(d, svg);
+                updateT(d, svg, year);
+              }
+            );
+          });
+
+          d3.select("#seventeen").on("click", function (d) {
+            year = 2017;
+            console.log(year);
+            d3.csv(
+              "data/timeLineData_" + year + ".csv",
+              rowConverter,
+              function (data) {
+                dataset = data;
+                //Update scale domains
+                updateDomain(d);
+                //Update all circles
+                updataC(d, svg);
+                updateT(d, svg, year);
+              }
+            );
+          });
+
+          d3.select("#eighteen").on("click", function (d) {
+            year = 2018;
+            console.log(year);
+            d3.csv(
+              "data/timeLineData_" + year + ".csv",
+              rowConverter,
+              function (data) {
+                dataset = data;
+                //Update scale domains
+                updateDomain(d);
+                //Update all circles
+                updataC(d, svg);
+                updateT(d, svg, year);
+              }
+            );
+          });
+
+          d3.select("#nineteen").on("click", function (d) {
+            year = 2019;
+            console.log(year);
+            d3.csv(
+              "data/timeLineData_" + year + ".csv",
+              rowConverter,
+              function (data) {
+                dataset = data;
+                //Update scale domains
+                updateDomain(d);
+                //Update all circles
+                updataC(d, svg);
+                updateT(d, svg, year);
+              }
+            );
+          });
+
+          d3.select("#twenty").on("click", function (d) {
+            year = 2020;
+            console.log(year);
+            d3.csv(
+              "data/timeLineData_" + year + ".csv",
+              rowConverter,
+              function (data) {
+                dataset = data;
+                //Update scale domains
+                updateDomain(d);
+                //Update all circles
+                updataC(d, svg);
+                updateT(d, svg, year);
+              }
+            );
+          });
+
+          d3.select("#twentyFirst").on("click", function (d) {
+            year = 2021;
+            console.log(year);
+            d3.csv(
+              "data/timeLineData_" + year + ".csv",
+              rowConverter,
+              function (data) {
+                dataset = data;
+                //Update scale domains
+                updateDomain(d);
+                //Update all circles
+                updataC(d, svg);
+                updateT(d, svg, year);
+              }
+            );
+          });
+
+          d3.select("#twentySecond").on("click", function (d) {
+            year = 2022;
+            console.log(year);
+            d3.csv(
+              "data/timeLineData_" + year + ".csv",
+              rowConverter,
+              function (data) {
+                dataset = data;
+                //Update scale domains
+                updateDomain(d);
+                //Update all circles
+                updataC(d, svg);
+                updateT(d, svg, year);
+              }
+            );
+          });
+
+          d3.select("#twentyThird").on("click", function (d) {
+            year = 2023;
+            console.log(year);
+            d3.csv(
+              "data/timeLineData_" + year + ".csv",
+              rowConverter,
+              function (data) {
+                dataset = data;
+                //Update scale domains
+                updateDomain(d);
+                //Update all circles
+                updataC(d, svg);
+                updateT(d, svg, year);
+              }
+            );
+          });
+        });
+      </script>
+    </div>
+  </body>
+</html>

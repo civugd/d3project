@@ -1,0 +1,31 @@
+html,
+body {
+  overflow: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  width: 100%;
+  height: 100%;
+  color: #444444;
+  /* overflow: scroll; */
+}
+
+h1 {
+  font-size: 24px;
+}
+
+a {
+  color: #0083b7;
+}
+div.tooltip-donut {
+  position: absolute;
+  text-align: center;
+  padding: 0.5rem;
+  background: #ffffff;
+  color: #313639;
+  border: 1px solid #313639;
+  border-radius: 8px;
+  width: auto;
+  height: 15px;
+  pointer-events: none;
+  font-size: 15px;
+}
